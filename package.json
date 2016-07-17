@@ -1,0 +1,26 @@
+{
+  "name": "ob-sidekick",
+  "version": "0.0.1",
+  "description": "OpenBazaar helper and plugin manager",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "cron": "^1.1.0",
+    "faker": "^3.1.0",
+    "insane-openbazaar-api": "^0.2.5",
+    "nedb": "^1.8.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0"
+  },
+  "scripts": {
+    "test": "nf run mocha"
+  },
+  "keywords": [
+    "openbazaar"
+  ],
+  "author": "Chris Grimmett <chris@grimtech.net>",
+  "license": "MIT"
+}
