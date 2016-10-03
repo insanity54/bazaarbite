@@ -9,6 +9,7 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "cheerio": "^0.22.0",
+    "cli-table2": "^0.2.0",
     "cron": "^1.1.0",
     "debug": "^2.2.0",
     "faker": "^3.1.0",
@@ -20,7 +21,9 @@
     "request-promise": "^4.1.1"
   },
   "devDependencies": {
-    "chai": "^3.5.0"
+    "chai": "^3.5.0",
+    "cli-table": "^0.3.1",
+    "table": "^3.8.0"
   },
   "scripts": {
     "test": "nf run mocha",

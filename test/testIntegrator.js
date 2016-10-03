@@ -1,7 +1,7 @@
 var Promise = require('bluebird');
 var integrator = require('../lib/integrator');
 var assert = require('chai').assert;
-var debug = require('debug')('ob-sidekick');
+var debug = require('debug')('bazaarbite');
 
 var firstFollower = {};
 
@@ -78,4 +78,61 @@ describe('integrator', function() {
                 throw err;
             });
     });
+
+
+    it('should get chat messages', function() {
+	return integrator.getChatMessages({'guid': 'd47eea06209d3da8dc10937399a9cf1c3dd4dca4'})
+	    .then(function(response) {
+		debug('  - got response')
+		debug(response)
+		assert.isArray(response);
+		assert.equal(response[0], 200, 'did not get HTTP code 200 back from OpenBazaar server.');
+		debug('  - got messages');
+		debug(response[1]);
+	    })
+    });
+
+    
+    it('should get chat conversations', function() {
+	return integrator.getChatConversations({})
+	    .then(function(response) {
+		assert.isArray(response);
+		assert.equal(response[0], 200, 'did not get HTTP code 200 back from OpenBazaar server.');
+		assert.isArray(response[1]);
+		assert.isObject(response[1][0]);
+
+		var convo = response[1][0];
+		assert.isString(convo['public_key']);
+		assert.isString(convo.guid);
+		assert.isString(convo.handle);
+		assert.isString(convo['last_message']);
+		assert.isNumber(convo.timestamp);
+		assert.isString(convo['avatar_hash']);
+		assert.isNumber(convo.unread);
+
+		debug('  - got conversations');
+		debug(response);
+	    })
+    });
+
+    it('should get notifications', function() {
+	return integrator.getNotifications({})
+	    .then(function(response) {
+		debug('  - got response');
+		debug(response);
+		assert.isArray(response);
+		assert.equal(response[0], 200, 'did not get HTTP code 200 from OpenBazaar-Server');
+		assert.isObject(response[1]);
+		var notifs = response[1].notifications;
+		debug(' - got notifs');
+		debug(notifs);
+		assert.isString(notifs[0].image_hash);
+		assert.isBoolean(notifs[0].read);
+		assert.isNumber(notifs[0].timestamp);
+		assert.isString(notifs[0].type);
+	    })
+    });
+
+
+
 });
