@@ -2,12 +2,18 @@ var Promise = require('bluebird');
 var integrator = require('../lib/integrator');
 var assert = require('chai').assert;
 var debug = require('debug')('bazaarbite');
+var fs = require('fs');
+var path = require('path');
+var moment = require('moment');
+
+
+
 
 var firstFollower = {};
 
 describe('integrator', function() {
 
-    this.timeout(5000);
+    this.timeout(10000);
 
     it('should login', function() {
         return integrator.login()
@@ -32,6 +38,7 @@ describe('integrator', function() {
                 assert.equal(reply[0], 200);
                 assert.isObject(reply[1]);
                 assert.isArray(reply[1].listings);
+		debug(reply[1].listings);
             })
             .catch(function(err) {
                 throw err;
@@ -115,6 +122,16 @@ describe('integrator', function() {
 	    })
     });
 
+    it('should mark chat message as read', function() {
+	return integrator.markChatMessageAsRead({guid: 'abceea06209d3da8dc10937399a9cf1cidjfe843'})
+	    .then(function(response) {
+		debug(response);
+		assert.isArray(response);
+		assert.equal(response[0], 200);
+		assert.equal(response[1].success, true);
+	    })
+    });
+
     it('should get notifications', function() {
 	return integrator.getNotifications({})
 	    .then(function(response) {
@@ -131,6 +148,66 @@ describe('integrator', function() {
 		assert.isNumber(notifs[0].timestamp);
 		assert.isString(notifs[0].type);
 	    })
+    });
+
+    it('should get a contract', function() {
+	return integrator.getContracts({id: '63f482a641794931f8ee7b1e290f1a3170cce6c5'})
+	    .then(function(response) {
+		debug('got contract');
+		debug(response);
+		assert.equal(response[0], 200, 'did not get HTTP code 200 from OpenBazaar-Server');
+		assert.isObject(response[1]);
+	    })
+    });
+
+    it('should create a contract', function() {
+	var expirationDate = moment().utc().add(5,'minutes').format('YYYY-MM-DDTHH:mm');
+	var contractOpts = {
+	    'expiration_date': expirationDate,
+	    'keywords': ['test', 'item', 'bazaar', 'market'],
+	    'metadata_category': 'physical good',
+	    'category': 'China Direct',
+	    'title': 'bazaarbite test item',
+	    'description': 'bazaarbite test. Expires '+expirationDate,
+	    'currency_code': 'USD',
+	    'price': 100,
+	    'process_time': '1 day',
+	    'nsfw': false,
+	    'shipping_origin': 'UNITED_STATES',
+	    'ships_to': ['ALL'],
+	    'est_delivery_domestic': '1-5 millenia',
+	    'est_delivery_international': '3-8 millenia',
+	    'terms_conditions': 'I will give you a high five instead of sending you this item',
+	    'returns': 'You may return the high five at any time of my choosing',
+	    'shipping_currency_code': 'USD',
+	    'shipping_domestic': 5,
+	    'shipping_international': 10,
+	    'condition': 'new',
+	    'sku': 'test',
+	    'images': ['88624d3bdb93776ebefcf82ddb6f57e3d71df431'],
+	    'free_shipping': false,
+	    
+	};
+	return integrator.createContract(contractOpts)
+	    .then(function(response) {
+		debug('  - created contract')
+		debug(response)
+		assert.equal(response[0], 200);
+		assert.isObject(response[1]);
+		assert.isTrue(response[1].success);
+	    });
+    });
+
+
+
+    it('should upload an image', function() {
+	this.timeout(15000);
+	var testImg = fs.readFileSync(path.join(__dirname, '..', 'blobs', 'testimage.png.b64'));
+	return integrator.uploadImage({image: testImg})
+	    .then(function(response) {
+		debug('  - image uploaded');
+		debug(response);
+	    });
     });
 
 

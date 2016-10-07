@@ -43,7 +43,9 @@ describe('DX', function() {
 		    assert.isNumber(data.price.markedUp);
 		    assert.isString(data.price.markedUpStr);
 		    assert.isString(data.price.currency);
-		    assert.isArray(data.pictures);
+		    assert.isObject(data.pictures);
+		    assert.isArray(data.pictures.urls);
+		    assert.isArray(data.pictures.b64s);
 
 
 		    var table = new Table(tableOpts);
@@ -57,13 +59,41 @@ describe('DX', function() {
 			data.price.listStr,
 			data.price.markedUpStr,
 			data.price.currency,
-			data.pictures.join('\n')
+			data.pictures.urls.join('\n')
 		    ]);
 		    
 		    //debug(table)
 		    console.log(table.toString());
 		    
 		});
+	});
+	
+	
+	
+	it('should gracefully deal with a URL without www or http at the start', function() {
+
+	    this.timeout(10000);
+	    
+	    var dx = new DX();
+	    return dx.getListing('dx.com/p/usb-charging-data-cable-for-samsung-galasy-s-iii-i9300-more-black-91cm-135426')
+		.then(function(data) {
+		    debug(data);
+		    assert.isObject(data);
+		    assert.isString(data.title);
+		    assert.isString(data.description);
+		    assert.isString(data.specifications);
+		    assert.isObject(data.price);
+		    assert.isNumber(data.price.original);
+		    assert.isString(data.price.originalStr);
+		    assert.isNumber(data.price.list);
+		    assert.isString(data.price.listStr);
+		    assert.isNumber(data.price.markedUp);
+		    assert.isString(data.price.markedUpStr);
+		    assert.isString(data.price.currency);
+		    assert.isObject(data.pictures);
+		    assert.isArray(data.pictures.urls);
+		    assert.isArray(data.pictures.b64s);
+		})
 	});
     });
 
@@ -101,7 +131,9 @@ describe('DX', function() {
 		    assert.isNumber(data.price.markedUp);
 		    assert.isString(data.price.markedUpStr);
 		    assert.isString(data.price.currency);
-		    assert.isArray(data.pictures);
+		    assert.isObject(data.pictures);
+		    assert.isArray(data.pictures.urls);
+		    assert.isArray(data.pictures.b64s);
 
 		    table.push([
 			data.title,
@@ -111,12 +143,33 @@ describe('DX', function() {
 			data.price.listStr,
 			data.price.markedUpStr,
 			data.price.currency,
-			data.pictures.join('\n')
+			data.pictures.urls.join('\n')
 		    ]);
 		})
 		.then(function() {
 		    //debug(table)
 		    console.log(table.toString());
+		});
+	});
+    });
+
+    describe('getPicture', function() {
+	it('should add http to a url without', function() {
+	    var dx = new DX();
+	    return dx.getPicture('//img.dxcdn.com/productimages/sku_5143_3.jpg')
+		.then(function(data) {
+		    var b64regex = /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
+		    var isValid = b64regex.test(data);
+		    assert.isTrue(isValid);
+		})
+	});
+	it('should accept a url to a picture, download the picture, and return {string} b64', function() {
+	    var dx = new DX();
+	    return dx.getPicture('http://img.dxcdn.com/productimages/sku_444756_3.jpg')
+		.then(function(data) {
+		    var b64regex = /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
+		    var isValid = b64regex.test(data);
+		    assert.isTrue(isValid);
 		});
 	});
     });
