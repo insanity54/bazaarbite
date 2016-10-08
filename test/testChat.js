@@ -2,6 +2,7 @@ var chat = require('../lib/chat');
 var assert = require('chai').assert;
 
 describe('chat', function() {
+
     describe('inspectMessage', function() {
 	it('should return false if no dx product url is found', function() {
 	    var chatMessage = "I am just stopping by to say HI. LOL";

@@ -119,7 +119,7 @@ describe('DX', function() {
 		})
 
 		.mapSeries(function(data) {
-		    // to through each listing data
+		    // iterate through each listing data
 		    assert.isString(data.title);
 		    assert.isString(data.description);
 		    assert.isString(data.specifications);
@@ -163,10 +163,13 @@ describe('DX', function() {
 		    assert.isTrue(isValid);
 		})
 	});
+
 	it('should accept a url to a picture, download the picture, and return {string} b64', function() {
 	    var dx = new DX();
 	    return dx.getPicture('http://img.dxcdn.com/productimages/sku_444756_3.jpg')
 		.then(function(data) {
+		    debug('  - got picture b64');
+		    debug(data);
 		    var b64regex = /^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/;
 		    var isValid = b64regex.test(data);
 		    assert.isTrue(isValid);
