@@ -132,6 +132,14 @@ describe('integrator', function() {
 	    })
     });
 
+    it('should send a chat message', function() {
+	return integrator.sendChatMessage({'recipient': '5ff7efef931771054b7124ad0f3d4c0056f67b32', 'key': '', 'message': '#YOLO #420 #BLAZEIT'})
+	    .then(function(response) {
+		debug(response);
+		assert.isArray(reponse);
+	    })
+    });
+
     it('should get notifications', function() {
 	return integrator.getNotifications({})
 	    .then(function(response) {
